@@ -1,0 +1,191 @@
+name: Build and Release
+
+# Trigger: When a new tag is pushed (v1.0.0, v1.1.0, etc.)
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    name: Build Application and Create Release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Required to create releases
+
+    steps:
+      # Step 1: Checkout code at the tagged version
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Step 4: Generate Prisma Client
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      # Step 5: Build the application
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      # Step 6: Create deployment package
+      - name: Create deployment package
+        run: |
+          # Create a clean directory for the deployment package
+          mkdir -p deploy-package
+
+          # Copy standalone build
+          cp -r .next/standalone/* deploy-package/
+
+          # Copy static files
+          mkdir -p deploy-package/.next/static
+          cp -r .next/static/* deploy-package/.next/static/
+
+          # Copy public folder
+          if [ -d "public" ]; then
+            cp -r public deploy-package/
+          fi
+
+          # Copy prisma (schema + migrations only, no DB files)
+          mkdir -p deploy-package/prisma
+          cp prisma/schema.prisma deploy-package/prisma/
+          if [ -d "prisma/migrations" ]; then
+            cp -r prisma/migrations deploy-package/prisma/
+          fi
+
+          # Copy configuration files
+          cp package.json deploy-package/
+          cp package-lock.json deploy-package/ || true
+
+          # Copy deployment scripts and configs
+          if [ -d "deployment" ]; then
+            cp -r deployment deploy-package/
+          fi
+
+          # Copy ecosystem config for PM2
+          if [ -f "ecosystem.config.js" ]; then
+            cp ecosystem.config.js deploy-package/
+          fi
+
+          # Copy IIS web.config
+          if [ -f "web.config" ]; then
+            cp web.config deploy-package/
+          fi
+
+          # Copy .env.example as template
+          if [ -f ".env.example" ]; then
+            cp .env.example deploy-package/
+          fi
+
+          # Create deployment instructions
+          cat > deploy-package/DEPLOYMENT-INSTRUCTIONS.txt << 'EOF'
+          Procurement System - Deployment Package
+          ========================================
+
+          Version: ${{ github.ref_name }}
+          Built: $(date)
+
+          IMPORTANT - Database Safety:
+          - This package does NOT include the database file
+          - Existing data will be preserved
+          - Only schema changes will be applied via Prisma migrations
+
+          Quick Deployment (Windows Server):
+          1. Stop the service: pm2 stop procurement
+          2. Backup current version and database
+          3. Extract this ZIP to deployment directory
+          4. Keep your existing .env file (do not replace!)
+          5. Keep your existing prisma/*.db file (do not replace!)
+          6. Run: npx prisma migrate deploy
+          7. Start the service: pm2 start ecosystem.config.js
+
+          For detailed instructions, see deployment/QUICK-START.md
+          EOF
+
+          # Create ZIP archive
+          cd deploy-package
+          zip -r ../procurement-${{ github.ref_name }}.zip .
+          cd ..
+
+      # Step 7: Extract version from tag
+      - name: Extract version
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      # Step 8: Generate release notes
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          # Get commits since last tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            COMMITS=$(git log --pretty=format:"- %s" HEAD)
+          else
+            COMMITS=$(git log --pretty=format:"- %s" $PREV_TAG..HEAD)
+          fi
+
+          # Create release notes file
+          cat > release-notes.md << EOF
+          ## What's Changed
+
+          $COMMITS
+
+          ## Deployment
+
+          ### For System Administrators:
+          1. Download \`procurement-${{ github.ref_name }}.zip\`
+          2. Run the update script: \`.\update-production.ps1 -Version "${{ steps.version.outputs.VERSION }}"\`
+          3. The script will automatically handle backup, deployment, and rollback if needed
+
+          ### Database Changes:
+          This version includes Prisma migrations that will safely update your database schema **without losing any data**.
+
+          ### Rollback:
+          If you need to rollback, use: \`.\rollback-production.ps1 -ToVersion "PREVIOUS_VERSION"\`
+
+          ## Package Contents
+          - Next.js standalone build (production-ready)
+          - Prisma schema and migrations
+          - Deployment scripts (PowerShell)
+          - Configuration files (PM2, IIS)
+
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ github.ref_name }}
+          EOF
+
+      # Step 9: Create GitHub Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: procurement-${{ github.ref_name }}.zip
+          body_path: release-notes.md
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 10: Summary
+      - name: Deployment Summary
+        run: |
+          echo "## Deployment Package Created Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package**: procurement-${{ github.ref_name }}.zip" >> $GITHUB_STEP_SUMMARY
+          echo "- **Size**: $(ls -lh procurement-${{ github.ref_name }}.zip | awk '{print $5}')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The release is now available at:" >> $GITHUB_STEP_SUMMARY
+          echo "https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY

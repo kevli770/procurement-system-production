@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "description": "Backup configuration for production deployment",
+  "backupPath": "C:\\backups\\procurement",
+  "maxBackups": 10,
+  "includeDatabase": true,
+  "compression": false,
+  "retentionPolicy": {
+    "keepDaily": 7,
+    "keepWeekly": 4,
+    "keepMonthly": 6
+  },
+  "excludePatterns": [
+    "node_modules",
+    ".next",
+    "*.log",
+    "*.tmp"
+  ],
+  "notifications": {
+    "enabled": false,
+    "email": "admin@example.com",
+    "onSuccess": false,
+    "onFailure": true
+  }
+}

@@ -1,0 +1,418 @@
+// Procurement System Database Schema
+// Generated from SPEC.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// AUTHENTICATION & USERS
+// ============================================
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  name              String
+  passwordHash      String
+  role              UserRole @default(USER)
+  approvalLimit     Float    @default(0) // Maximum amount user can approve (in NIS)
+  isActive          Boolean  @default(true)
+
+  // Hierarchy
+  managerId         String?
+  manager           User?    @relation("UserHierarchy", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subordinates      User[]   @relation("UserHierarchy")
+
+  // Preferences
+  language          String   @default("he") // "he" or "en"
+
+  // Timestamps
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  lastLoginAt       DateTime?
+
+  // Relations
+  createdPOs        PurchaseOrder[] @relation("POCreator")
+  approvals         Approval[]
+  sessions          Session[]
+  accounts          Account[]
+
+  @@index([email])
+  @@index([managerId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum UserRole {
+  USER          // Regular user
+  MANAGER       // Manager (can approve)
+  ADMIN         // System admin
+  SUPER_ADMIN   // CTO / Top level (no approval limit)
+}
+
+// ============================================
+// ITEMS & CATALOGUE
+// ============================================
+
+model Item {
+  id                String      @id @default(cuid())
+  sku               String      @unique // Auto-generated
+  name              String
+  nameEn            String?     // English name
+  description       String?
+  descriptionEn     String?
+
+  // Characters (dynamic classifications)
+  character1Id      String?
+  character1        Character?  @relation("ItemChar1", fields: [character1Id], references: [id])
+  character2Id      String?
+  character2        Character?  @relation("ItemChar2", fields: [character2Id], references: [id])
+  character3Id      String?
+  character3        Character?  @relation("ItemChar3", fields: [character3Id], references: [id])
+
+  // Pricing
+  suggestedPrice    Float       @default(0)
+
+  // Validity Period
+  isOneTimePurchase Boolean     @default(true)
+  validFrom         DateTime?
+  validTo           DateTime?
+
+  // Supplier
+  supplierId        String?
+  supplier          Supplier?   @relation(fields: [supplierId], references: [id])
+
+  remarks           String?
+  isActive          Boolean     @default(true)
+
+  // Timestamps
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relations
+  poLines           POLineItem[]
+
+  @@index([sku])
+  @@index([supplierId])
+  @@index([character1Id])
+}
+
+model Character {
+  id          String   @id @default(cuid())
+  type        String   // "character1", "character2", "character3"
+  value       String   // The actual value (e.g., "Service", "Hardware")
+  valueEn     String?  // English translation
+  order       Int      @default(0) // Display order
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations (depending on type)
+  itemsChar1  Item[]   @relation("ItemChar1")
+  itemsChar2  Item[]   @relation("ItemChar2")
+  itemsChar3  Item[]   @relation("ItemChar3")
+
+  @@unique([type, value])
+  @@index([type])
+}
+
+// ============================================
+// SUPPLIERS
+// ============================================
+
+model Supplier {
+  id              String   @id @default(cuid())
+  name            String
+  nameEn          String?
+
+  // Contact Info
+  email           String
+  phone           String?
+  contactPerson   String?
+
+  // Business Info
+  taxId           String?  // ח.פ / ע.מ
+  address         String?
+
+  remarks         String?
+  isActive        Boolean  @default(true)
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  items           Item[]
+  purchaseOrders  PurchaseOrder[]
+
+  @@index([email])
+}
+
+// ============================================
+// COMPANIES (Group entities)
+// ============================================
+
+model Company {
+  id              String   @id @default(cuid())
+  name            String
+  nameEn          String?
+  taxId           String?  // ח.פ
+  logo            String?  // Logo file path or base64 data
+  isActive        Boolean  @default(true)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  purchaseOrders  PurchaseOrder[]
+}
+
+// ============================================
+// PURCHASE ORDERS
+// ============================================
+
+model PurchaseOrder {
+  id              String        @id @default(cuid())
+  poNumber        String        @unique // Auto-generated (format: PO-YYYYMMDD-XXXX)
+
+  // Header Info
+  date            DateTime      @default(now())
+  supplierId      String
+  supplier        Supplier      @relation(fields: [supplierId], references: [id])
+  companyId       String
+  company         Company       @relation(fields: [companyId], references: [id])
+  remarks         String?
+
+  // Created by
+  createdById     String
+  createdBy       User          @relation("POCreator", fields: [createdById], references: [id])
+
+  // Status
+  status          POStatus      @default(DRAFT)
+
+  // Totals
+  totalAmount     Float         @default(0)
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  submittedAt     DateTime?     // When changed from DRAFT to FINAL
+  approvedAt      DateTime?     // When fully approved
+
+  // Relations
+  lineItems       POLineItem[]
+  approvals       Approval[]
+  cashPayDoc      CashPay?
+  emailLogs       EmailLog[]
+
+  @@index([poNumber])
+  @@index([createdById])
+  @@index([supplierId])
+  @@index([status])
+  @@index([date])
+}
+
+enum POStatus {
+  DRAFT              // User is still editing
+  PENDING_APPROVAL   // Waiting for manager approval
+  APPROVED           // Fully approved
+  REJECTED           // Rejected by approver
+  CANCELLED          // Cancelled by creator
+  CHANGE_REQUESTED   // Approver requested changes
+}
+
+model POLineItem {
+  id              String        @id @default(cuid())
+  poId            String
+  po              PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+
+  // Item reference (snapshot at creation time)
+  itemId          String?
+  item            Item?         @relation(fields: [itemId], references: [id])
+
+  // Snapshot data (in case item is deleted/changed later)
+  itemName        String
+  itemDescription String?
+  itemSku         String?
+
+  // Characters snapshot
+  character1      String?
+  character2      String?
+  character3      String?
+
+  // Pricing
+  unitPrice       Float
+  quantity        Float         @default(1)
+  lineTotal       Float         // unitPrice * quantity
+
+  // Order
+  lineNumber      Int           // 1, 2, 3...
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([poId])
+  @@index([itemId])
+}
+
+// ============================================
+// APPROVAL WORKFLOW
+// ============================================
+
+model Approval {
+  id              String        @id @default(cuid())
+  poId            String
+  po              PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+
+  // Approver
+  approverId      String
+  approver        User          @relation(fields: [approverId], references: [id])
+
+  // Approval details
+  level           Int           // 1, 2, 3, 4 (hierarchy level)
+  status          ApprovalStatus @default(PENDING)
+  comments        String?       // For rejection or change requests
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  respondedAt     DateTime?     // When approver made decision
+
+  @@index([poId])
+  @@index([approverId])
+  @@index([status])
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CHANGE_REQUESTED
+}
+
+// ============================================
+// CASH PAY DOCUMENTS
+// ============================================
+
+model CashPay {
+  id              String        @id @default(cuid())
+  poId            String        @unique
+  po              PurchaseOrder @relation(fields: [poId], references: [id], onDelete: Cascade)
+
+  // PDF storage
+  pdfPath         String        // Local file path
+  pdfFilename     String
+
+  // Signature info (from approver)
+  approverName    String
+  approverTitle   String?
+
+  createdAt       DateTime      @default(now())
+
+  @@index([poId])
+}
+
+// ============================================
+// EMAIL LOGS
+// ============================================
+
+model EmailLog {
+  id              String        @id @default(cuid())
+  poId            String?
+  po              PurchaseOrder? @relation(fields: [poId], references: [id])
+
+  // Email details
+  to              String
+  subject         String
+  body            String?
+  attachments     String?       // JSON array of filenames
+
+  // Status
+  status          EmailStatus   @default(PENDING)
+  errorMessage    String?
+
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  sentAt          DateTime?
+
+  @@index([poId])
+  @@index([status])
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+// ============================================
+// SYSTEM CONFIGURATION
+// ============================================
+
+model SystemConfig {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  value           String   // JSON string for complex values
+  description     String?
+
+  updatedAt       DateTime @updatedAt
+}
+
+// ============================================
+// AUDIT LOG
+// ============================================
+
+model AuditLog {
+  id              String   @id @default(cuid())
+  userId          String?
+  action          String   // "CREATE_PO", "APPROVE_PO", "UPDATE_ITEM", etc.
+  entityType      String   // "PurchaseOrder", "Item", "User", etc.
+  entityId        String?
+  changes         String?  // JSON of before/after
+  ipAddress       String?
+  userAgent       String?
+
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType])
+  @@index([createdAt])
+}

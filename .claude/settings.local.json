@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p context/specs)",
+      "Bash(git checkout -b feature/procurement-system-planning)",
+      "Bash(git add context/specs/)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd comprehensive planning documentation for Procurement System\n\nCreated detailed planning documents:\n- PRD.md: Product Requirements Document with user stories, features, and clarifications\n- SPEC.md: Technical Specification with architecture, database schema, API routes, and workflows\n- data-model.md: Detailed data model with entity relationships and validation rules\n- implementation-plan.md: Phased implementation plan with 10-week timeline and 2900+ tasks\n\nKey decisions:\n- Replace Clerk with NextAuth.js for local authentication\n- Use SQLite + Prisma for local database\n- SMTP configuration for email automation\n- Multi-level approval workflow (up to 4 levels)\n- Snapshot pattern for PO line items (historical data preservation)\n\nNext steps: Begin Phase 0 (Project Setup)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push -u origin feature/procurement-system-planning)",
+      "Bash(mkdir -p design-docs/pages design-docs/shared-components)",
+      "Bash(git add design-docs/)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitialize page builder workflow system\n\nCreated design-docs structure:\n- /design-docs/pages/ for page specifications\n- /design-docs/shared-components/ for shared component tracking\n\nThis infrastructure supports the page builder workflow where:\n1. AI analyzes project requirements and creates design docs\n2. AI determines Level 1/2 categories needed\n3. User browses kibo-ui.com/patterns to select Level 3 patterns\n4. AI installs selected patterns and builds pages\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push)",
+      "mcp__shadcn__get_project_registries",
+      "mcp__shadcn__list_items_in_registries",
+      "Bash(npm install prisma @prisma/client next-auth@beta bcryptjs winston date-fns nodemailer react-hook-form @hookform/resolvers zod @tanstack/react-query @react-pdf/renderer next-intl)",
+      "Bash(npm install -D @types/bcryptjs @types/nodemailer prisma)",
+      "Bash(npx prisma init --datasource-provider sqlite)",
+      "Bash(cat .env)",
+      "Bash(npx prisma generate)",
+      "Bash(node --version:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd complete Windows Server deployment package for IIS + PM2\n\nCreated comprehensive deployment solution including:\n\nInfrastructure Setup:\n- ecosystem.config.js: PM2 cluster configuration (3 instances)\n- web.config: IIS reverse proxy configuration with health checks\n- .env.production: Production environment variables template\n\nAutomation Scripts (PowerShell):\n- install-pm2-service.ps1: Automated PM2 Windows Service installation\n- setup-iis.ps1: Automated IIS configuration and site creation\n- backup-database.ps1: Database backup with retention policy\n- monitor-services.ps1: Health monitoring with email alerts\n\nApplication Updates:\n- next.config.ts: Added standalone output for production deployment\n- src/app/api/health/route.ts: Health check endpoint for monitoring\n\nDocumentation (Hebrew):\n- deployment/DEPLOYMENT-GUIDE-HE.md: Complete step-by-step deployment guide\n- deployment/README.md: Quick reference and package overview\n- docs/MAINTENANCE.md: Daily/weekly maintenance procedures\n- docs/MONITORING.md: Monitoring setup and alerting configuration\n\nFeatures:\n- Auto-restart on crash (PM2)\n- Auto-start on server reboot (Windows Service)\n- Zero-downtime deployments (cluster mode)\n- Automated backups with 30-day retention\n- Email alerts on service failures\n- IIS reverse proxy with SSL-ready configuration\n- Health check monitoring every 10 minutes\n\nTarget Environment:\n- Windows Server 2019\n- Node.js 20.x LTS\n- IIS 10.0+ with ARR and URL Rewrite modules\n- SQLite database on D: drive\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(npm run build:*)",
+      "Bash(gh:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Read(//c/Users/kevin/OneDrive/מסמכים/Dev-Projects/Union/**)",
+      "Bash(rsync:*)",
+      "Bash(powershell -Command:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
