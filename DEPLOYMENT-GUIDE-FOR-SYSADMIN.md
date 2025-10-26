@@ -38,7 +38,7 @@ Changes:
 - Fixed validation bug
 
 Download:
-https://github.com/kevli770/procurement-system-production/releases
+https://github.com/umitgh/procurement-system/releases
 
 To deploy, run:
 .\update-production.ps1 -Version "0.2.0"
@@ -49,7 +49,7 @@ To deploy, run:
 ### Step 2: Review the Release (Optional but Recommended)
 
 **Open your web browser:**
-1. Go to: https://github.com/kevli770/procurement-system-production/releases
+1. Go to: https://github.com/umitgh/procurement-system/releases
 2. You'll see:
 
 ```
@@ -522,8 +522,8 @@ pm2 start procurement
 
 ### Useful Links:
 
-- **Releases:** https://github.com/kevli770/procurement-system-production/releases
-- **Actions:** https://github.com/kevli770/procurement-system-production/actions
+- **Releases:** https://github.com/umitgh/procurement-system/releases
+- **Actions:** https://github.com/umitgh/procurement-system/actions
 - **Troubleshooting:** See TROUBLESHOOTING.md in deployment folder
 
 ---

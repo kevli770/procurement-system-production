@@ -2,7 +2,7 @@
 
 ## 🎉 מה עשינו?
 
-יצרנו רפוזיטורי חדש `kevli770/procurement-system-production` עם:
+יצרנו רפוזיטורי חדש `umitgh/procurement-system` עם:
 
 ✅ GitHub Actions - build אוטומטי
 ✅ סקריפטים לפריסה אוטומטית
@@ -15,7 +15,7 @@
 ## 📍 איפה הכל נמצא?
 
 ### הרפוזיטורי החדש:
-🔗 https://github.com/kevli770/procurement-system-production
+🔗 https://github.com/umitgh/procurement-system
 
 ### הרפוזיטורי הישן:
 🔗 https://github.com/kevli770/procurement-system (נשאר ללא שינוי)
@@ -33,7 +33,7 @@
 cd c:\Users\kevin\OneDrive\מסמכים\Dev-Projects\Union\procurement
 
 # הוסף remote חדש
-git remote add production https://github.com/kevli770/procurement-system-production.git
+git remote add production https://github.com/umitgh/procurement-system.git
 
 # כשאתה מוכן לפרסם גרסה חדשה:
 # 1. עשה push לפרויקט הרגיל
@@ -111,7 +111,7 @@ npm run release:minor
 gh run list --limit 1
 
 # או פתח בדפדפן:
-# https://github.com/kevli770/procurement-system-production/releases
+# https://github.com/umitgh/procurement-system/releases
 ```
 
 תראה: **📦 v0.2.0 - Latest Release**
@@ -193,7 +193,7 @@ completed	... Build and Release	v0.1.0 ...
 ### 3. בדוק Releases
 
 פתח:
-https://github.com/kevli770/procurement-system-production/releases
+https://github.com/umitgh/procurement-system/releases
 
 תראה: **v0.1.0** עם קובץ ZIP
 
@@ -309,7 +309,7 @@ npm run release:major
 gh run list --limit 1
 
 # או בדפדפן
-# https://github.com/kevli770/procurement-system-production/releases
+# https://github.com/umitgh/procurement-system/releases
 ```
 
 אחרי 5 דקות תראה את הגרסה החדשה עם ZIP מוכן להורדה.
@@ -328,7 +328,7 @@ gh run list --limit 1
 **יש לך עכשיו מערכת פריסה מקצועית!**
 
 **הרפו החדש:**
-🔗 https://github.com/kevli770/procurement-system-production
+🔗 https://github.com/umitgh/procurement-system
 
 **תיעוד מלא:**
 📘 [QUICK-START.md](QUICK-START.md)

@@ -120,7 +120,7 @@ pm2-service-install
 **3.1 Get the Latest Release:**
 ```
 1. Open browser
-2. Go to: https://github.com/kevli770/procurement-system-production/releases
+2. Go to: https://github.com/umitgh/procurement-system/releases
 3. You'll see: "v0.1.0 - Latest Release"
 4. Under "Assets", click: procurement-v0.1.0.zip
 5. Save to: C:\temp\procurement-v0.1.0.zip

@@ -39,7 +39,7 @@ npm run release:major
 ```
 "גרסה v1.2.0 מוכנה בגיטהאב"
 או שלח לינק:
-https://github.com/kevli770/procurement-system-production/releases
+https://github.com/umitgh/procurement-system/releases
 ```
 
 ---
@@ -51,7 +51,7 @@ https://github.com/kevli770/procurement-system-production/releases
 **צעד 1: בדוק מה יש**
 ```
 1. פתח דפדפן
-2. עבור ל: https://github.com/kevli770/procurement-system-production/releases
+2. עבור ל: https://github.com/umitgh/procurement-system/releases
 3. תראה: "📦 v1.2.0 - Latest Release"
 4. קרא את release notes - מה השתנה?
 ```

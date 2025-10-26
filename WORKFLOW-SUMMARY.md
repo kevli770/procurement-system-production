@@ -49,7 +49,7 @@ When GitHub sees the new tag, it automatically:
 gh run list --limit 1
 ```
 
-Or visit: https://github.com/kevli770/procurement-system-production/actions
+Or visit: https://github.com/umitgh/procurement-system/actions
 
 ---
 
@@ -68,7 +68,7 @@ Changes:
 - Added phone field to suppliers
 - Fixed validation bug
 
-Release: https://github.com/kevli770/procurement-system-production/releases/tag/v0.2.0
+Release: https://github.com/umitgh/procurement-system/releases/tag/v0.2.0
 
 To deploy, run:
 .\update-production.ps1 -Version "0.2.0"
@@ -89,7 +89,7 @@ Thanks!
 ### 👨‍💼 **System Administrator (On Production Server)**
 
 #### Step 1: Review Release
-- Go to: https://github.com/kevli770/procurement-system-production/releases
+- Go to: https://github.com/umitgh/procurement-system/releases
 - Read what changed
 - Check database migration notes
 
@@ -220,7 +220,7 @@ You can also specify:
 **Me:**
 > ✅ Release v0.2.0 is ready!
 >
-> 📦 https://github.com/kevli770/procurement-system-production/releases/tag/v0.2.0
+> 📦 https://github.com/umitgh/procurement-system/releases/tag/v0.2.0
 >
 > You can notify the system administrator to deploy.
 
@@ -258,9 +258,9 @@ You can also specify:
 
 | Resource | Link |
 |----------|------|
-| **Repository** | https://github.com/kevli770/procurement-system-production |
-| **Releases** | https://github.com/kevli770/procurement-system-production/releases |
-| **Actions** | https://github.com/kevli770/procurement-system-production/actions |
+| **Repository** | https://github.com/umitgh/procurement-system |
+| **Releases** | https://github.com/umitgh/procurement-system/releases |
+| **Actions** | https://github.com/umitgh/procurement-system/actions |
 
 ---
 

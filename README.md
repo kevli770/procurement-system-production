@@ -1,7 +1,7 @@
 # Procurement Management System - Production
 
-![Version](https://img.shields.io/github/v/release/kevli770/procurement-system-production)
-![Build](https://img.shields.io/github/actions/workflow/status/kevli770/procurement-system-production/release.yml)
+![Version](https://img.shields.io/github/v/release/umitgh/procurement-system)
+![Build](https://img.shields.io/github/actions/workflow/status/umitgh/procurement-system/release.yml)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 מערכת ניהול רכש מקצועית עם תהליך פריסה אוטומטי לסביבת ייצור.
@@ -158,7 +158,7 @@ procurement-system-production/
 
 ```bash
 # Clone repository
-git clone https://github.com/kevli770/procurement-system-production.git
+git clone https://github.com/umitgh/procurement-system.git
 cd procurement-system-production
 
 # Install dependencies
@@ -210,7 +210,7 @@ npm run dev
 
 **גרסאות אחרונות:**
 
-[🔗 ראה כל ה-Releases >>](https://github.com/kevli770/procurement-system-production/releases)
+[🔗 ראה כל ה-Releases >>](https://github.com/umitgh/procurement-system/releases)
 
 ---
 
@@ -243,7 +243,7 @@ npm run dev
 - ✨ Database safety measures
 - ✨ Rollback capabilities
 
-[📖 Full Changelog >>](https://github.com/kevli770/procurement-system-production/releases)
+[📖 Full Changelog >>](https://github.com/umitgh/procurement-system/releases)
 
 ---
 
@@ -252,7 +252,7 @@ npm run dev
 ### יש בעיה?
 
 1. **בדוק את [פתרון הבעיות](TROUBLESHOOTING.md)**
-2. **חפש ב-[Issues](https://github.com/kevli770/procurement-system-production/issues)**
+2. **חפש ב-[Issues](https://github.com/umitgh/procurement-system/issues)**
 3. **פתח Issue חדש** עם:
    - תיאור הבעיה
    - שלבים לשחזור
@@ -260,7 +260,7 @@ npm run dev
 
 ### שאלות?
 
-- 💬 [Discussions](https://github.com/kevli770/procurement-system-production/discussions)
+- 💬 [Discussions](https://github.com/umitgh/procurement-system/discussions)
 
 ---
 
@@ -281,7 +281,7 @@ This project is licensed under the MIT License.
 
 ## 📞 יצירת קשר
 
-**Project Link:** [https://github.com/kevli770/procurement-system-production](https://github.com/kevli770/procurement-system-production)
+**Project Link:** [https://github.com/umitgh/procurement-system](https://github.com/umitgh/procurement-system)
 
 ---
 

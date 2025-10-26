@@ -38,8 +38,8 @@ param(
 
 # Configuration
 $ErrorActionPreference = "Stop"
-$RepoOwner = "kevli770"
-$RepoName = "procurement-system-production"
+$RepoOwner = "umitgh"
+$RepoName = "procurement-system"
 $AppName = "procurement"
 $DeployPath = "C:\inetpub\$AppName"
 $BackupPath = "C:\backups\$AppName"
